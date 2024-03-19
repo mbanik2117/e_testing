@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mx-auto my-8">
+        <h1 class="text-3xl font-bold mb-8">Welcome to the Online Test Platform</h1>
+
+        {% if user.is_authenticated %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                <!-- Featured Subjects -->
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-lg font-semibold mb-2">Featured Subjects</h3>
+                    <p>Explore "View More" section.</p>
+                    <a href="{% url 'featured_subjects' %}" class="mt-4 block text-blue-500 hover:underline">View More</a>
+                </div>
+
+                <!-- Recent Tests -->
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-lg font-semibold mb-2">Recent Tests</h3>
+                    <ul class="list-none">
+                        {% for test_attempt in recent_tests %}
+                            <li class="mb-2">
+                                <span class="font-semibold">{{ test_attempt.test.subject.name }}</span> - {{ test_attempt.test.name }} ({{ test_attempt.date_taken }})
+                            </li>
+                        {% endfor %}
+                        <a href="{% url 'recent_tests' %}" class="mt-4 block text-blue-500 hover:underline">View More</a>
+                    </ul>
+                </div>
+
+                <!-- Leaderboard -->
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-lg font-semibold mb-2">Leaderboard</h3>
+                    <a href="{% url 'user_performance' %}" class="mt-4 block text-blue-500 hover:underline">View More</a>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <a href="{% url 'subject_list' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">View All Mock Tests</a>
+            </div>
+        {% else %}
+            <p class="text-center text-lg mb-4">Please login to access the tests.</p>
+            <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for exam in exams %}
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-bold mb-2">{{ exam.name }}</h2>
+                        <p class="text-gray-600">{{ exam.description }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

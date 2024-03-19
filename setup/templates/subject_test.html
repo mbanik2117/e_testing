@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">{{ subject.name }} Test</h1>
+
+        <div class="text-center mb-4">
+            <p id="timer" class="text-2xl font-semibold"></p>
+        </div>
+
+        <form id="test-form" method="POST">
+            {% csrf_token %}
+            {% for question in questions %}
+                <div id="question-{{ question.id }}" class="question-container p-4 bg-white rounded-lg shadow-md mb-4">
+                    <p class="text-lg font-medium">{{ question.text }}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                        {% for option_number, option_text in question.get_options_with_numbers %}
+                            <div>
+                                <input type="radio" name="answer_{{ question.id }}" id="option_{{ question.id }}_{{ option_number }}" value="{{ option_number }}" class="bg-gray-200 border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded">
+                                <label for="option_{{ question.id }}_{{ option_number }}" class="block font-medium bg-white p-2 shadow-md rounded">
+                                    {{ option_number }}
+                                    <span class="ml-2">{{ option_text }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <button type="submit" id="submit-button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50">Submit Test</button>
+        </form>
+    </div>
+
+    <script>
+        const testDuration = 1;  // Replace with actual test duration in minutes
+    let timer = testDuration * 60;  // Convert to seconds
+
+    function startTimer() {
+        const timerElement = document.getElementById('timer');
+        const submitButton = document.getElementById('submit-button');
+        const testForm = document.getElementById('test-form');
+
+        const intervalId = setInterval(() => {
+            timerElement.textContent = `Time Remaining: ${timer} seconds`;
+            timer--;
+
+            // Disable all buttons except "Submit Test" if the timer is running
+            const buttonsToDisable = document.querySelectorAll('button:not(#submit-button)');
+            buttonsToDisable.forEach(button => {
+                button.disabled = timer > 0;
+            });
+
+            // Disable browser navigation buttons
+            window.onbeforeunload = function () {
+                return "Leaving this page will end your test. Are you sure?";
+            };
+
+            // Check if any question is unanswered
+            let unansweredQuestion = false;
+            document.querySelectorAll('[id^=question-]').forEach(questionDiv => {
+                const questionId = questionDiv.id.split('-')[1];
+                const selectedOption = document.querySelector(`input[name="answer_${questionId}"]:checked`);
+                if (!selectedOption) {
+                    unansweredQuestion = true;
+                }
+            });
+
+            // Auto-submit the test and display results when the timer hits zero
+            if (timer <= 0 || unansweredQuestion) {
+                clearInterval(intervalId);
+                timerElement.textContent = 'Time is up! Submitting the test...';
+                submitButton.disabled = true;
+                window.onbeforeunload = null;
+
+                // Simulate form submission (replace with actual form submission logic)
+                setTimeout(() => {
+                    if (unansweredQuestion) {
+                        // Handle unanswered questions here, e.g., set score to zero
+                        console.log('Some questions are unanswered. Setting score to zero.');
+                    }
+                    testForm.submit();
+                    // You can replace the above line with logic to display results.
+                    // For simplicity, we'll just log a message here.
+                    console.log('Test submitted, display results logic here.');
+                }, 1000);
+            }
+        }, 1000);
+    }
+
+    window.onload = startTimer;
+    </script>
+{% endblock %}

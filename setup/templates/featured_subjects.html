@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mx-auto my-8">
+        <h1 class="text-3xl font-bold mb-8">Featured Subjects</h1>
+
+        {% if featured_subjects %}
+            <ul class="list-disc pl-4">
+                {% for subject in featured_subjects %}
+                    <li class="mb-2 text-blue-600 font-semibold">{{ subject.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No featured subjects available.</p>
+        {% endif %}
+    </div>
+{% endblock %}

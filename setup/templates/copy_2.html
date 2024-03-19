@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mx-auto p-4 flex">
+        <div class="w-3/4 pr-8">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold mb-4">{{ subject.name }} Test</h1>
+                <div class="text-center mb-4">
+                    <p id="timer" class="text-2xl font-semibold"></p>
+                </div>
+                <form id="test-form" method="POST">
+                    {% csrf_token %}
+                    {% for question in questions %}
+                        <div id="question-{{ question.id }}" class="question-container p-4 bg-white rounded-lg shadow-md mb-4">
+                            <p class="text-lg font-medium">{{ question.text }}</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                                {% for option_number, option_text in question.get_options_with_numbers %}
+                                    <div>
+                                        <input type="radio" name="answer_{{ question.id }}" id="option_{{ question.id }}_{{ option_number }}" value="{{ option_number }}" class="bg-gray-200 border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded">
+                                        <label for="option_{{ question.id }}_{{ option_number }}" class="block font-medium bg-white p-2 shadow-md rounded">
+                                            {{ option_number }}
+                                            <span class="ml-2">{{ option_text }}</span>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50">Submit Test</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="w-1/4 overflow-y-auto border-l pl-4">
+            <h2 class="text-xl font-semibold mb-2">Questions</h2>
+            <div class="space-y-2">
+                {% for question in questions %}
+                    <button id="question-nav-{{ question.id }}" class="py-2 px-4 bg-gray-200 hover:bg-gray-300 rounded">
+                        Question {{ forloop.counter }}
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="fixed top-0 right-0 m-4">
+            <button id="save-and-next" type="button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save & Next</button>
+            <button id="clear-answer" type="button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Clear</button>
+        </div>
+    </div>
+
+    <script>
+        const testDuration = 120;  // Replace with actual test duration in minutes
+        let timer = testDuration * 60;  // Convert to seconds
+
+        function startTimer() {
+            setInterval(() => {
+                document.getElementById('timer').textContent = `Time Remaining: ${timer} seconds`;
+                timer--;
+                if (timer <= 0) {
+                    document.getElementById('test-form').submit();  // Submit the form automatically
+                }
+            }, 1000);
+        }
+
+        window.onload = startTimer;
+
+        // JavaScript for buttons
+        const saveAndNextButton = document.getElementById('save-and-next');
+        const clearAnswerButton = document.getElementById('clear-answer');
+
+        saveAndNextButton.addEventListener('click', () => {
+            // Add logic to save the answer and navigate to the next question
+            console.log('Save & Next button clicked');
+        });
+
+        clearAnswerButton.addEventListener('click', () => {
+            // Add logic to clear the selected answer
+            console.log('Clear button clicked');
+        });
+
+        // JavaScript for question navigation
+        const questionNavButtons = document.querySelectorAll('[id^="question-nav-"]');
+        questionNavButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const questionId = button.id.split('-')[2];
+                document.getElementById(`question-${questionId}`).scrollIntoView();
+            });
+        });
+    </script>
+{% endblock %}

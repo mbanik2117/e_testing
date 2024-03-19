@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Your Site{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-blue-500 p-4 text-white">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                <a href="{% url 'home' %}" class="text-xl font-bold">Home</a>
+            </div>
+            <div class="space-x-4">
+                <!-- Add links to all subjects where tests are available -->
+                {% for subject in subjects %}
+                    <a href="{% url 'test_list' subject=subject.name %}" class="mr-4">{{ subject.name }}</a>
+                {% endfor %}
+            </div>
+            <div class="relative">
+                <!-- Accounts dropdown -->
+                <button id="accounts-dropdown" class="bg-transparent text-white font-semibold py-2 px-4 rounded inline-flex items-center">
+                    Accounts
+                    <svg class="fill-current h-4 w-4 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/></svg>
+                </button>
+                <div id="dropdown-menu" class="absolute bg-white text-gray-700 p-2 mt-2 space-y-2 rounded-md hidden">
+                    <a href="{% url 'signup' %}" class="block px-4 py-2 text-sm">Sign Up</a>
+                    <a href="{% url 'login' %}" class="block px-4 py-2 text-sm">Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-8 max-w-2xl">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        // Toggle dropdown menu
+        document.getElementById('accounts-dropdown').addEventListener('click', function() {
+            var dropdownMenu = document.getElementById('dropdown-menu');
+            dropdownMenu.classList.toggle('hidden');
+        });
+
+        // Close dropdown menu when clicking outside
+        document.addEventListener('click', function(event) {
+            var dropdownMenu = document.getElementById('dropdown-menu');
+            var accountsDropdown = document.getElementById('accounts-dropdown');
+
+            if (!accountsDropdown.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.classList.add('hidden');
+            }
+        });
+    </script>
+
+</body>
+</html>

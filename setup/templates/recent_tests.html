@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mx-auto my-8">
+        <h1 class="text-3xl font-bold mb-8">Recent Tests</h1>
+
+        {% if recent_tests %}
+            <ul class="list-none">
+                {% for test_attempt in recent_tests %}
+                    <li class="mb-4 border-b border-gray-300 pb-4">
+                        <span class="block text-blue-600 font-semibold">{{ test_attempt.test.subject.name }}</span>
+                        <span class="text-gray-600">{{ test_attempt.test.name }} ({{ test_attempt.end_time }})</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No recent tests available.</p>
+        {% endif %}
+    </div>
+{% endblock %}

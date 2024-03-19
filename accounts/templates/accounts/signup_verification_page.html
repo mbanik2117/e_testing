@@ -1,0 +1,27 @@
+<!-- accounts/templates/accounts/signup_verification_page.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-md mx-auto mt-8">
+    <div class="bg-white p-8 rounded shadow-md">
+      <h2 class="text-2xl font-semibold mb-6">Enter the 6-digit verification code</h2>
+      
+      {% if error %}
+        <p class="text-red-500 mb-4">Invalid verification code. Please try again.</p>
+      {% endif %}
+
+      <form method="post" action="{% url 'signup_code_verification' user_id=user_id %}">
+        {% csrf_token %}
+        <input type="text" name="verification_code" class="border p-2 w-full mb-4" placeholder="Enter code" required>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+      </form>
+
+      <!-- Resend Code Form -->
+      <form method="post" action="{% url 'resend_verification_code' user_id=user_id %}">
+        {% csrf_token %}
+        <button type="submit" class="text-blue-500 mt-2">Resend Code</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

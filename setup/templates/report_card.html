@@ -1,0 +1,30 @@
+<!-- report_card.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Report Card{% endblock %}
+
+{% block content %}
+    <div class="max-w-3xl mx-auto bg-white p-8 rounded shadow mt-8">
+        <h1 class="text-3xl font-bold mb-6">Report Card</h1>
+        <div class="mb-4">
+            <p class="text-sm text-gray-500">Test Attempt ID: {{ attempt.id }}</p>
+            <p class="text-lg font-semibold mb-2">Subject: {{ attempt.subject.name }}</p>
+            <p class="text-lg font-semibold mb-2">User: {{ attempt.user_profile.user.username }}</p>
+            <p class="text-lg font-semibold mb-2">Score: {{ attempt.score }}</p>
+        </div>
+
+        <h2 class="text-2xl font-bold mt-8 mb-4">User Answers</h2>
+        <ul>
+            {% for answer in user_answers %}
+                <li class="mb-6 border-b border-gray-300 pb-4">
+                    <p class="text-lg font-semibold">{{ answer.question.text }}</p>
+                    <div class="flex items-center space-x-2 mt-2">
+                        <p class="text-sm text-gray-500">Selected Option: {{ answer.selected_option }}</p>
+                        <p class="text-sm text-gray-500">Correct Option: {{ answer.question.correct_option }}</p>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
