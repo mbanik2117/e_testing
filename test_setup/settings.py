@@ -17,14 +17,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k$k(h^b41=75abl41)6fu5_t%ydzzwi9dtipi^uv2dfmig$a%@'
+SECRET_KEY = os.getenv("SECURITY_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -72,17 +77,17 @@ WSGI_APPLICATION = 'test_setup.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+import dj_database_url
 
+database_url=os.getenv("DATABASE_URL")
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'test_db',
-        'USER': 'ecomuser',
-        'PASSWORD': 'arka@1256',
-        'HOST': 'db',  # Change this to the service name of the PostgreSQL container
-        'PORT': '5432',
-    }
+    'default': dj_database_url.parse(
+        database_url,
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -139,22 +144,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
-from celery.schedules import crontab
 
-# Celery configuration
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
 CELERY_ENABLE_UTC = True
 
-
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587  # or the appropriate port for your SMTP server
+EMAIL_BACKEND = os.getenv("BACKEND")
+EMAIL_HOST = os.getenv("HOST")
+EMAIL_PORT = os.getenv("PORT")  # or the appropriate port for your SMTP server
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'dacretail2024@gmail.com'
-EMAIL_HOST_PASSWORD = 'tbal rnoa szak uoyb'
+EMAIL_HOST_USER = os.getenv("HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("HOST_PASSWORD")
